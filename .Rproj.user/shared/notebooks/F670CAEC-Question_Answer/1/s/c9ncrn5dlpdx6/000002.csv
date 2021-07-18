@@ -1,0 +1,7 @@
+"0","# check if the media is mainstream media"
+"0",""
+"0","data_RT %>% "
+"0","  filter(RT_from!=author) %>% "
+"0","  count(RT_from) %>% "
+"0","  arrange(desc(n)) %>% "
+"0","  filter(n>40) # filter the retweet over 10 times by public"

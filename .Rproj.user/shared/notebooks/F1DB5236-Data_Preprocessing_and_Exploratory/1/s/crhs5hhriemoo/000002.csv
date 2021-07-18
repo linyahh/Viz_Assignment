@@ -1,0 +1,5 @@
+"0",""
+"0","#timestamp in lubridate"
+"0","data$timestamp <- ymd_hms(data$`date(yyyyMMddHHmmss)`)"
+"0","data$time_1min = cut(data$timestamp, breaks=""1 min"")"
+"0",""

@@ -1,0 +1,2 @@
+"0",""
+"0","head(count[order(-count$count_of_posts),],10)"

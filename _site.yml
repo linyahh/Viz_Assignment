@@ -1,0 +1,22 @@
+name: "Viz_assignment"
+title: "Linya Huang"
+description: |
+  Assignment
+output_dir: "_site"
+navbar:
+  right:
+    - text: "Home"
+      href: index.html
+    - text: "Introduction"
+      href: Introduction.html
+    - text: "Literature Review"
+      href: Literature_Review.html 
+    - text: "Preprocessing and EDA"
+      href: Data_Preprocessing_and_Exploratory.html       
+    - text: "Question Answer"
+      href: Question_Answer.html         
+    - text: "About"
+      href: about.html
+
+
+output: distill::distill_article

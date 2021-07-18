@@ -1,0 +1,10 @@
+---
+title: "Assignment"
+description: |
+  This is website is for assignment submission of ISSS608 Visual Analytics and Applications.
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+

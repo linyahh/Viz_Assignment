@@ -1,0 +1,11 @@
+Junghoon Chae, Dennis Thom, Yun Jang, SungYe Kim, Thomas Ertl, David S. Ebert,
+Public behavior response analysis in disaster events utilizing visual analytics of microblog data,
+Computers & Graphics,
+Volume 38,
+2014,
+Pages 51-60,
+ISSN 0097-8493,
+https://doi.org/10.1016/j.cag.2013.10.008.
+(https://www.sciencedirect.com/science/article/pii/S0097849313001490)
+Abstract: Analysis of public behavior plays an important role in crisis management, disaster response, and evacuation planning. Unfortunately, collecting relevant data can be costly and finding meaningful information for analysis is challenging. A growing number of Location-based Social Network services provides time-stamped, geo-located data that opens new opportunities and solutions to a wide range of challenges. Such spatiotemporal data has substantial potential to increase situational awareness of local events and improve both planning and investigation. However, the large volume of unstructured social media data hinders exploration and examination. To analyze such social media data, our system provides the analysts with an interactive visual spatiotemporal analysis and spatial decision support environment that assists in evacuation planning and disaster management. We demonstrate how to improve investigation by analyzing the extracted public behavior responses from social media before, during and after natural disasters, such as hurricanes and tornadoes.
+Keywords: Visual analytics; Social media analysis; Disaster management
