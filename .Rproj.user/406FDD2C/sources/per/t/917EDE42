@@ -3,23 +3,23 @@
     "path": "E:/linyahh/Assignment/Viz_assignment/Data_Preprocessing_and_Exploratory.Rmd",
     "project_path": "Data_Preprocessing_and_Exploratory.Rmd",
     "type": "r_markdown",
-    "hash": "2622114650",
+    "hash": "2202949988",
     "contents": "",
     "dirty": false,
     "created": 1626618038902.0,
     "source_on_save": false,
-    "relative_order": 4,
+    "relative_order": 3,
     "properties": {
-        "cursorPosition": "1,59",
-        "scrollLine": "0",
-        "last_setup_crc32": ""
+        "cursorPosition": "38,83",
+        "scrollLine": "25",
+        "last_setup_crc32": "6836E23E2f490dc0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1626620424,
+    "lastKnownWriteTime": 1626884437,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1626620424814,
+    "last_content_update": 1626884437186,
     "read_only": false,
     "read_only_alternatives": []
 }

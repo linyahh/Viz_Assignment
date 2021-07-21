@@ -1,7 +1,7 @@
 ---
 title: "Assignment"
 description: |
-  Welcome to the website. I hope you enjoy it!
+  This is website is for assignment submission of ISSS608 Visual Analytics and Applications.
 site: distill::distill_website
 ---
 

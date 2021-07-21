@@ -3,23 +3,23 @@
     "path": "E:/linyahh/Assignment/Viz_assignment/Question_Answer.Rmd",
     "project_path": "Question_Answer.Rmd",
     "type": "r_markdown",
-    "hash": "1174286046",
+    "hash": "2070697876",
     "contents": "",
     "dirty": false,
     "created": 1626619811093.0,
     "source_on_save": false,
-    "relative_order": 3,
+    "relative_order": 4,
     "properties": {
-        "cursorPosition": "3,131",
-        "scrollLine": "0",
-        "last_setup_crc32": ""
+        "cursorPosition": "870,0",
+        "scrollLine": "869",
+        "last_setup_crc32": "6836E23E2f490dc0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1626620521,
+    "lastKnownWriteTime": 1626884437,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1626620521448,
+    "last_content_update": 1626884437212,
     "read_only": false,
     "read_only_alternatives": []
 }

@@ -15,8 +15,8 @@ navbar:
       href: Data_Preprocessing_and_Exploratory.html       
     - text: "Question Answer"
       href: Question_Answer.html         
-    - text: "About"
-      href: about.html
+    # - text: "About"
+    #   href: about.html
 
 
 output: distill::distill_article

@@ -2106,8 +2106,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#import-packages-and-social-media-stream-data">3.1 Import packages and social media stream data</a></li>
 <li><a href="#manipulate-datetime">3.2 Manipulate Datetime</a></li>
 <li><a href="#text-data-preprocessing">3.3 Text Data Preprocessing</a></li>
-<li><a href="#text-data-word-cloud">3.3 Text Data Word Cloud</a><ul>
-<li><a href="#messages-from-call-center">3.3 Messages from Call Center</a></li>
+<li><a href="#eda">3.4 EDA</a><ul>
+<li><a href="#text-data-word-cloud">Text Data Word Cloud</a></li>
+<li><a href="#messages-from-call-center">Messages from Call Center</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -2152,18 +2153,11 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <span class='va'>data</span><span class='op'>=</span><span class='fu'>rbindlist</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>data_17_1830</span>,<span class='va'>data_1830_20</span>,<span class='va'>data_20_2130</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'>#print head of data</span>
-<span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>[</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>]</span><span class='op'>)</span>, <span class='st'>"pipe"</span><span class='op'>)</span>
+<span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>data</span>,<span class='fl'>1</span><span class='op'>)</span>, <span class='st'>"pipe"</span><span class='op'>)</span>
 </code></pre>
 </div>
 </details>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 4%" />
-<col style="width: 12%" />
-<col style="width: 11%" />
-<col style="width: 66%" />
-<col style="width: 5%" />
-</colgroup>
+<table>
 <thead>
 <tr class="header">
 <th style="text-align: left;">type</th>
@@ -2171,6 +2165,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <th style="text-align: left;">author</th>
 <th style="text-align: left;">message</th>
 <th style="text-align: right;">latitude</th>
+<th style="text-align: right;">longitude</th>
+<th style="text-align: left;">location</th>
 </tr>
 </thead>
 <tbody>
@@ -2180,41 +2176,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <td style="text-align: left;">POK</td>
 <td style="text-align: left;">Follow us <span class="citation" data-cites="POK-Kronos">@POK-Kronos</span></td>
 <td style="text-align: right;">NA</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">mbdata</td>
-<td style="text-align: right;">2.014012e+13</td>
-<td style="text-align: left;">maha_Homeland</td>
-<td style="text-align: left;">Don’t miss a moment! Follow our live coverage of the POK Rally in the Park!</td>
 <td style="text-align: right;">NA</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">mbdata</td>
-<td style="text-align: right;">2.014012e+13</td>
-<td style="text-align: left;">Viktor-E</td>
-<td style="text-align: left;">Come join us in the Park! Music tonight at Abila City Park!</td>
-<td style="text-align: right;">NA</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">mbdata</td>
-<td style="text-align: right;">2.014012e+13</td>
-<td style="text-align: left;">KronosStar</td>
-<td style="text-align: left;">POK rally to start in Abila City Park. POK leader Sylvia Marek to open with a speech.&lt;U+0098&gt; #KronosStar</td>
-<td style="text-align: right;">NA</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">mbdata</td>
-<td style="text-align: right;">2.014012e+13</td>
-<td style="text-align: left;">AbilaPost</td>
-<td style="text-align: left;">POK rally set to take place in Abila City Park - POK leader Sylvia Marek has begun with opening remarks #AbilaPost</td>
-<td style="text-align: right;">NA</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">mbdata</td>
-<td style="text-align: right;">2.014012e+13</td>
-<td style="text-align: left;">ourcountryourrights</td>
-<td style="text-align: left;">POK rally in the park tonight! #POKrally</td>
-<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
 </tr>
 </tbody>
 </table>
@@ -2227,6 +2190,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#timestamp in lubridate</span>
 <span class='va'>data</span><span class='op'>$</span><span class='va'>timestamp</span> <span class='op'>&lt;-</span> <span class='fu'>ymd_hms</span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>`date(yyyyMMddHHmmss)`</span><span class='op'>)</span>
 <span class='va'>data</span><span class='op'>$</span><span class='va'>time_1min</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>timestamp</span>, breaks<span class='op'>=</span><span class='st'>"1 min"</span><span class='op'>)</span>
+<span class='va'>data</span><span class='op'>$</span><span class='va'>time_30min</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>timestamp</span>, breaks<span class='op'>=</span><span class='st'>"30 min"</span><span class='op'>)</span>
 </code></pre>
 </div>
 </details>
@@ -2237,9 +2201,12 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <details>
 <summary>Show code</summary>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>rt</span> <span class='op'>&lt;-</span> <span class='st'>"RT @([A-Za-z]+[A-Za-z0-9_-]+)(?![A-Za-z0-9_]*\\.)"</span>
-<span class='va'>ppl</span> <span class='op'>&lt;-</span> <span class='st'>"@([A-Za-z]+[A-Za-z0-9_-]+)(?![A-Za-z0-9_]*\\.)"</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ppl</span> <span class='op'>&lt;-</span> <span class='st'>"@([A-Za-z]+[A-Za-z0-9_-]+)(?![A-Za-z0-9_]*\\.)"</span>
+<span class='va'>rt</span> <span class='op'>&lt;-</span> <span class='st'>"RT @([A-Za-z]+[A-Za-z0-9_-]+)(?![A-Za-z0-9_]*\\.) "</span>
 <span class='va'>hash</span> <span class='op'>&lt;-</span> <span class='st'>"#([A-Za-z]+[A-Za-z0-9_]+)(?![A-Za-z0-9_]*\\.)"</span>
+
+
+
 
 <span class='va'>data</span><span class='op'>$</span><span class='va'>cleaned</span><span class='op'>&lt;-</span><span class='va'>data</span><span class='op'>$</span><span class='va'>message</span> <span class='op'>%&gt;%</span> 
   <span class='fu'>str_replace_all</span><span class='op'>(</span><span class='va'>rt</span>,<span class='st'>""</span><span class='op'>)</span><span class='op'>%&gt;%</span>
@@ -2265,22 +2232,19 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <span class='va'>regex2</span> <span class='op'>&lt;-</span> <span class='st'>"@([A-Za-z]+[A-Za-z0-9_-]+)(?![A-Za-z0-9_]*\\.)"</span>
 <span class='va'>regex3</span> <span class='op'>&lt;-</span> <span class='st'>"RT @([A-Za-z]+[A-Za-z0-9_-]+)(?![A-Za-z0-9_]*\\.) "</span>
 <span class='va'>regex4</span> <span class='op'>&lt;-</span> <span class='st'>"#([A-Za-z]+[A-Za-z0-9_]+)(?![A-Za-z0-9_]*\\.)"</span>
+<span class='va'>hash</span> <span class='op'>&lt;-</span> <span class='st'>"#([A-Za-z]+[A-Za-z0-9_]+)(?![A-Za-z0-9_]*\\.)"</span>
 
 <span class='va'>data</span><span class='op'>$</span><span class='va'>RT_pattern</span><span class='op'>&lt;-</span><span class='fu'>str_extract_all</span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>message</span>, <span class='va'>regex</span>, simplify <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='va'>data</span><span class='op'>$</span><span class='va'>RT_from</span><span class='op'>&lt;-</span>  <span class='fu'>str_extract_all</span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>RT_pattern</span>, <span class='va'>regex2</span>, simplify <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='va'>data</span><span class='op'>$</span><span class='va'>RT_from</span><span class='op'>&lt;-</span>  <span class='fu'>str_replace</span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>RT_from</span>, <span class='st'>"@"</span>,<span class='st'>""</span><span class='op'>)</span>
 <span class='va'>data</span><span class='op'>$</span><span class='va'>RT_message</span> <span class='op'>&lt;-</span> <span class='fu'>str_replace_all</span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>message</span>,<span class='va'>regex3</span>,<span class='st'>""</span><span class='op'>)</span>
 
-<span class='va'>data</span><span class='op'>$</span><span class='va'>hashtag</span> <span class='op'>&lt;-</span> <span class='fu'>str_extract_all</span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>message</span>, <span class='va'>regex4</span>, simplify <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+
 <span class='va'>data</span><span class='op'>$</span><span class='va'>user_mentioned</span> <span class='op'>&lt;-</span> <span class='fu'>str_extract_all</span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>message</span>, <span class='va'>regex2</span>, simplify <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
 
-<span class='va'>data</span><span class='op'>$</span><span class='va'>hashtag</span><span class='op'>&lt;-</span><span class='va'>data</span><span class='op'>$</span><span class='va'>hashtag</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>str_replace_all</span><span class='op'>(</span><span class='st'>"character\\(0\\)|c\\(|\\)"</span>,<span class='st'>""</span><span class='op'>)</span>
-
-
 <span class='va'>data</span><span class='op'>$</span><span class='va'>user_mentioned</span><span class='op'>&lt;-</span><span class='va'>data</span><span class='op'>$</span><span class='va'>user_mentioned</span><span class='op'>%&gt;%</span> 
-  <span class='fu'>str_replace_all</span><span class='op'>(</span><span class='st'>"character\\(0\\)|c\\(|\\)"</span>,<span class='st'>""</span><span class='op'>)</span>
+  <span class='fu'>str_replace_all</span><span class='op'>(</span><span class='st'>"character\\(0\\)|c\\(|\\)|,"</span>,<span class='st'>""</span><span class='op'>)</span>
 
 <span class='va'>data_RT</span><span class='op'>&lt;-</span> <span class='va'>data</span> <span class='op'>%&gt;%</span> 
   <span class='fu'><a href='https://rdrr.io/r/stats/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>RT_from</span><span class='op'>!=</span><span class='st'>""</span><span class='op'>)</span>
@@ -2328,7 +2292,46 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </tbody>
 </table>
 </div>
-<h2 id="text-data-word-cloud">3.3 Text Data Word Cloud</h2>
+Get Hashtags
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>Show code</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>GetHashtags</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>tweet</span><span class='op'>)</span> <span class='op'>{</span>
+
+  <span class='va'>hashtag.vector</span> <span class='op'>&lt;-</span> <span class='fu'>str_extract_all</span><span class='op'>(</span>string <span class='op'>=</span> <span class='va'>tweet</span>, pattern <span class='op'>=</span> <span class='st'>'#\\S+'</span>, simplify <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+    <span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='op'>)</span>
+  
+  <span class='va'>hashtag.string</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
+  
+  <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>hashtag.vector</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
+    
+    <span class='va'>hashtag.string</span> <span class='op'>&lt;-</span> <span class='va'>hashtag.vector</span> <span class='op'>%&gt;%</span> <span class='fu'>str_c</span><span class='op'>(</span>collapse <span class='op'>=</span> <span class='st'>', '</span><span class='op'>)</span>
+    
+  <span class='op'>}</span> 
+
+  <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>hashtag.string</span><span class='op'>)</span>
+<span class='op'>}</span>
+
+<span class='va'>hashtags.df</span> <span class='op'>&lt;-</span> <span class='fu'>tibble</span><span class='op'>(</span>
+  Hashtags <span class='op'>=</span> <span class='va'>data</span><span class='op'>$</span><span class='va'>message</span> <span class='op'>%&gt;%</span> <span class='fu'>map_chr</span><span class='op'>(</span>.f <span class='op'>=</span> <span class='op'>~</span> <span class='fu'>GetHashtags</span><span class='op'>(</span>tweet <span class='op'>=</span> <span class='va'>.x</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>)</span>
+<span class='va'>hashtags.df</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 6 x 1
+  Hashtags   
+  &lt;chr&gt;      
+1 &lt;NA&gt;       
+2 &lt;NA&gt;       
+3 &lt;NA&gt;       
+4 #KronosStar
+5 #AbilaPost 
+6 #POKrally  </code></pre>
+</div>
+<h2 id="eda">3.4 EDA</h2>
+<h3 id="text-data-word-cloud">Text Data Word Cloud</h3>
 <p>Use world cloud to show most frequent words/hastags/tagged users.</p>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -2363,7 +2366,7 @@ Content:  documents: 2
 </code></pre>
 </div>
 </details>
-<img src="Data_Preprocessing_and_Exploratory_files/figure-html5/unnamed-chunk-5-1.png" width="624" />
+<img src="Data_Preprocessing_and_Exploratory_files/figure-html5/unnamed-chunk-6-1.png" width="624" />
 <details>
 <summary>Show code</summary>
 <div class="sourceCode">
@@ -2372,7 +2375,7 @@ Content:  documents: 2
 
 <span class='co'>#convert dataframe to corpus</span>
 
-<span class='va'>docs</span> <span class='op'>&lt;-</span> <span class='fu'>Corpus</span><span class='op'>(</span><span class='fu'>VectorSource</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>hashtag</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>docs</span> <span class='op'>&lt;-</span> <span class='fu'>Corpus</span><span class='op'>(</span><span class='fu'>VectorSource</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='va'>hashtags.df</span><span class='op'>$</span><span class='va'>Hashtags</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#inspect(docs[1:2])</span>
 
 <span class='co'># Create a document-term-matrix</span>
@@ -2389,7 +2392,7 @@ Content:  documents: 2
 </code></pre>
 </div>
 </details>
-<img src="Data_Preprocessing_and_Exploratory_files/figure-html5/unnamed-chunk-5-2.png" width="624" />
+<img src="Data_Preprocessing_and_Exploratory_files/figure-html5/unnamed-chunk-6-2.png" width="624" />
 <details>
 <summary>Show code</summary>
 <div class="sourceCode">
@@ -2422,7 +2425,7 @@ Content:  documents: 2
 </code></pre>
 </div>
 </details>
-<img src="Data_Preprocessing_and_Exploratory_files/figure-html5/unnamed-chunk-5-3.png" width="624" />
+<img src="Data_Preprocessing_and_Exploratory_files/figure-html5/unnamed-chunk-6-3.png" width="624" />
 <details>
 <summary>Show code</summary>
 <div class="sourceCode">
@@ -2431,7 +2434,7 @@ Content:  documents: 2
 </div>
 </details>
 </div>
-<h3 id="messages-from-call-center">3.3 Messages from Call Center</h3>
+<h3 id="messages-from-call-center">Messages from Call Center</h3>
 <p>Visualize count of distinct messages from call center. The most frequent messages from call center are traffic stop, incomplete call for police and alarm-secure no crime. And there are numbers of messages related to suspicious as well.</p>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -2450,13 +2453,14 @@ Content:  documents: 2
   <span class='fu'>geom_bar</span><span class='op'>(</span>stat<span class='op'>=</span><span class='st'>'identity'</span><span class='op'>)</span> <span class='op'>+</span>
   <span class='fu'>coord_flip</span><span class='op'>(</span><span class='op'>)</span><span class='op'>+</span>
   <span class='fu'>ggtitle</span><span class='op'>(</span><span class='st'>"Messages from Call Center"</span><span class='op'>)</span><span class='op'>+</span>
-  <span class='fu'>theme</span><span class='op'>(</span> axis.text.x <span class='op'>=</span> <span class='fu'>element_blank</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='fu'>theme_classic</span><span class='op'>(</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'>geom_text</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span>label <span class='op'>=</span> <span class='va'>n</span><span class='op'>)</span>,hjust<span class='op'>=</span><span class='fl'>1</span>,colour <span class='op'>=</span> <span class='st'>"white"</span><span class='op'>)</span>
 </code></pre>
 </div>
 </details>
-<p><img src="Data_Preprocessing_and_Exploratory_files/figure-html5/unnamed-chunk-6-1.png" width="1152" /></p>
+<p><img src="Data_Preprocessing_and_Exploratory_files/figure-html5/unnamed-chunk-7-1.png" width="1152" /></p>
 </div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

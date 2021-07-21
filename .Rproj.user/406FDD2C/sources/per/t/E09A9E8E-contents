@@ -58,6 +58,12 @@ They think "the size of the nodes represents the number of the blog being post. 
 
 This is a very good intuition to visualize center and edges microblog users. In addition, I think this visualization can be further improved with visnetwork interactivity, that users can click the node and get more information about the nodes (authors,post,number of retweets and so on.)
 
+
+[Universidad de Buenos Aires](http://visualdata.wustl.edu/varepository/VAST%20Challenge%202014/challenges/MC3%20-%20Real-Time,%20Streaming%20Social%20Media/entries/University%20of%20Buenos%20Aires%20-%20Rukavina/) analyzed the number of messages by author. With the calculation of spam index, they found that a low spam index value indicates many messages with the same text and thus is associated with a high likelihood of spam.
+
+![Spam Index](image/spam_index.png)
+This is a good inspiration of feature engineering of the given dataset. The visualization can be further improved as the line chart was misused on discrete value and users' retweet pattern can be added for more insights. 
+
 ## 2.4 Relationship or text and text entities visualization
 
 [Textnets](https://github.com/cbail/textnets) is a R package for automated text analysis using network techniques.It provides network for both text and text entities, which provides visualization ability to uncover correlation of texts in documents.

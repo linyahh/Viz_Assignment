@@ -36,7 +36,7 @@ packages= c('sf','clock','tmap',
             'BTM','textplot','concaveman','ggwordcloud',
             'qdapDictionaries','textstem','devtools','textnets',
             'ggiraph','plotly','igraph', 'tidygraph', 
-             'ggraph', 'visNetwork','udpipe','grid')
+             'ggraph', 'visNetwork','udpipe','grid','sp','sf','gridExtra','mapview')
 
 for(p in packages){
   if(!require(p,character.only= T)){
@@ -60,7 +60,7 @@ data_20_2130=read_csv("data/MC3/csv-2001-2131.csv")
 data=rbindlist(list(data_17_1830,data_1830_20,data_20_2130))
 
 #print head of data
-knitr::kable(head(data[, 1:5]), "pipe")
+knitr::kable(head(data,1), "pipe")
 
 ```
 
@@ -72,7 +72,7 @@ knitr::kable(head(data[, 1:5]), "pipe")
 #timestamp in lubridate
 data$timestamp <- ymd_hms(data$`date(yyyyMMddHHmmss)`)
 data$time_1min = cut(data$timestamp, breaks="1 min")
-
+data$time_30min = cut(data$timestamp, breaks="30 min")
 ```
 
  
@@ -82,9 +82,15 @@ data$time_1min = cut(data$timestamp, breaks="1 min")
 Preprocess text data by lower case transformation, remove punctuation, numbers , stopwords and retrieve RT/ hashtags from message by using regex techniques.
 
 ```{r}
-rt <- "RT @([A-Za-z]+[A-Za-z0-9_-]+)(?![A-Za-z0-9_]*\\.)"
+
+
+
 ppl <- "@([A-Za-z]+[A-Za-z0-9_-]+)(?![A-Za-z0-9_]*\\.)"
+rt <- "RT @([A-Za-z]+[A-Za-z0-9_-]+)(?![A-Za-z0-9_]*\\.) "
 hash <- "#([A-Za-z]+[A-Za-z0-9_]+)(?![A-Za-z0-9_]*\\.)"
+
+
+
 
 data$cleaned<-data$message %>% 
   str_replace_all(rt,"")%>%
@@ -110,22 +116,19 @@ regex <- "RT @([A-Za-z]+[A-Za-z0-9_-]+)(?![A-Za-z0-9_]*\\.)"
 regex2 <- "@([A-Za-z]+[A-Za-z0-9_-]+)(?![A-Za-z0-9_]*\\.)"
 regex3 <- "RT @([A-Za-z]+[A-Za-z0-9_-]+)(?![A-Za-z0-9_]*\\.) "
 regex4 <- "#([A-Za-z]+[A-Za-z0-9_]+)(?![A-Za-z0-9_]*\\.)"
+hash <- "#([A-Za-z]+[A-Za-z0-9_]+)(?![A-Za-z0-9_]*\\.)"
 
 data$RT_pattern<-str_extract_all(data$message, regex, simplify = TRUE)
 data$RT_from<-  str_extract_all(data$RT_pattern, regex2, simplify = TRUE)
 data$RT_from<-  str_replace(data$RT_from, "@","")
 data$RT_message <- str_replace_all(data$message,regex3,"")
 
-data$hashtag <- str_extract_all(data$message, regex4, simplify = FALSE)
+
 data$user_mentioned <- str_extract_all(data$message, regex2, simplify = FALSE)
 
 
-data$hashtag<-data$hashtag %>%
-  str_replace_all("character\\(0\\)|c\\(|\\)","")
-
-
 data$user_mentioned<-data$user_mentioned%>% 
-  str_replace_all("character\\(0\\)|c\\(|\\)","")
+  str_replace_all("character\\(0\\)|c\\(|\\)|,","")
 
 data_RT<- data %>% 
   filter(RT_from!="")
@@ -134,7 +137,33 @@ knitr::kable(head(subset(data,select=c("message","cleaned"))), "pipe")
 
 ```
 
-## 3.3 Text Data Word Cloud
+Get Hashtags
+```{r}
+GetHashtags <- function(tweet) {
+
+  hashtag.vector <- str_extract_all(string = tweet, pattern = '#\\S+', simplify = TRUE) %>% 
+    as.character()
+  
+  hashtag.string <- NA
+  
+  if (length(hashtag.vector) > 0) {
+    
+    hashtag.string <- hashtag.vector %>% str_c(collapse = ', ')
+    
+  } 
+
+  return(hashtag.string)
+}
+
+hashtags.df <- tibble(
+  Hashtags = data$message %>% map_chr(.f = ~ GetHashtags(tweet = .x))
+)
+hashtags.df %>% head()
+```
+
+## 3.4 EDA
+
+### Text Data Word Cloud
 
 Use world cloud to show most frequent words/hastags/tagged users.
  
@@ -160,7 +189,7 @@ wordcloud(words = df$word, freq = df$freq, min.freq = 5,           max.words=200
 
 #convert dataframe to corpus
 
-docs <- Corpus(VectorSource(as.character(data$hashtag)))
+docs <- Corpus(VectorSource(as.character(hashtags.df$Hashtags)))
 #inspect(docs[1:2])
 
 # Create a document-term-matrix
@@ -194,7 +223,7 @@ df <- data.frame(word = names(words),freq=words)
 wordcloud(words = df$word, freq = df$freq, min.freq = 5,           max.words=200, random.order=FALSE, rot.per=0.35,            colors=brewer.pal(8, "Dark2"))
 #wordcloud2(data=df, size=1.6, color='random-dark')
 ```
-### 3.3 Messages from Call Center
+### Messages from Call Center
 
 Visualize count of distinct messages from call center. The most frequent messages from call center are traffic stop, incomplete call for police and alarm-secure no crime. And there are numbers of messages related to suspicious as well.
 
@@ -212,7 +241,8 @@ ggplot(cc_data2,aes(x=reorder(message,n), y=n)) +
   geom_bar(stat='identity') +
   coord_flip()+
   ggtitle("Messages from Call Center")+
-  theme( axis.text.x = element_blank())
+  theme_classic()+
+  geom_text(aes(label = n),hjust=1,colour = "white")
 
 
 ```

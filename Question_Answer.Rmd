@@ -23,6 +23,27 @@ knitr::opts_chunk$set(fig.retina = 3,
                       warning=FALSE)
 ```
 
+
+```{r}
+
+packages= c('sf','clock','tmap',
+            'tidyverse','data.table','lubridate',
+            'textclean','tm','wordcloud','text2vec',
+            'topicmodels','tidytext','textmineR','quanteda',
+            'BTM','textplot','concaveman','ggwordcloud',
+            'qdapDictionaries','textstem','devtools','textnets',
+            'ggiraph','plotly','igraph', 'tidygraph', 
+             'ggraph', 'visNetwork','udpipe','grid')
+
+for(p in packages){
+  if(!require(p,character.only= T)){
+    install.packages(p)
+    }
+  library(p, character.only = T)
+}
+```
+
+
 # 4.Data Visualization for Challenge Questions
 
 
@@ -35,14 +56,13 @@ __4.1 Using visual analytics, characterize the different types of content in the
 ### __Wordcloud trend of 30 minutes time interval__
 
 
-Split data by 30 minutes time interval and perform  worldcloud, to visualize the most frequent words in the microblog.
+Split data by 30 minutes time interval and perform  worldcloud in each interval, to visualize the most frequent words in the microblog.
 
 
 ```{r,fig.width=9, fig.height=9,warning=FALSE}
 
-#split data into 30 minutes time interval
-data$timestamp <- ymd_hms(data$`date(yyyyMMddHHmmss)`)
-data$time_30min = cut(data$timestamp, breaks="30 min")
+#add id to dataset
+
 data$id <- seq.int(nrow(data))
 
 data_subset=subset(data,select=c("time_30min","cleaned"))
@@ -107,11 +127,18 @@ data_subset$time_30min<-str_replace_all(data_subset$time_30min,"2014-01-23 21:30
 
 bigrams <- data_subset%>%
   group_by(time_30min)%>%
-  unnest_tokens(word, 
-                cleaned, 
-                token = "ngrams", 
+  unnest_tokens(word,
+                cleaned,
+                token = "ngrams",
                 n = 2) %>%
   count(time_30min,word, sort = TRUE) %>% ungroup()
+
+# bigrams <- data_subset%>%
+#   unnest_tokens(word,
+#                 cleaned,
+#                 token = "ngrams",
+#                 n = 2) %>%
+#   count(time_30min,word, sort = TRUE)
 
 
 tf_idf <- bigrams%>%
@@ -143,10 +170,14 @@ tf_idf %>%
              scales = "free") +
   labs(x = "TF-IDF Bigram in 30 time interval",
        y = NULL)
+
+
+
+
 ```
 
 
-Without having to process more on data, the contents of the microblogs with 30 mins time interval is even more informative.
+Without having to process more on data, the contents of the microblogs with 30 mins time interval is even more informative as tf-idf reflects how important a word is to a document in a collection or corpus.
 
 For instance, from 1700-1800, we know that police presense at pok rally and Dr. Audrey is mentioned several times from 1800. Then from 1830 , fire occurs at dolphin apartment and followed by evacuation. Subsequently, from 1930, a shot/gun fire happened with police involved, followed by injured firefighter and  hospitalization. And at 2100 suspects were arrested and followed by an explosion at dolphin apartment from 2130 onward. 
 
@@ -200,15 +231,17 @@ ap_top_terms %>%
 As shown above, the meaningful keywords can be found in each topic. From the distribution, we can see that in abnormal topic such as topic 1,5 and 9, the top words are dominating the topic, while in other chatter/junk/spam topics, a few normal words has relatively same high beta value.
 As such, topics can be identified roughly as below.
 
-Topic 1 - fire at dancing dolphin
+Topic 1 - police related with evacuation/hostage/standoff
 
-Topic 3 - pok rally
+Topic 3 - fire at dancing dolphin
 
-Topic 5- police related with evacuation/hostage/standoff
+Topic 5- van/guy/cop related
 
-Topic 9 - van/guy
+Topic 9 - pok rally
 
-While other topics are more chatter/junk related.
+Topic 10 - POK leader
+
+While other topics do not have distinguishable words, resulting the contents related to chatter/junk/spam.
 
 
 
@@ -234,8 +267,8 @@ topic_data<-left_join(topic_gamma,id_time,by=c("document"="id"))
 #manually put topics in LDA results
 
 topic_c<- c(1,2,3,4,5,6,7,8,9,10)  
-topics_c <- c("fire","chatter1","pokrally","junk","police related",
-"chatter3","chatter4","chatter5","van","junk")
+topics_c <- c("police","chatter1","chatter2","fire","chatter3",
+"van","chatter4","chatter5","pokrally","pokleader")
 topic_df<-data.frame(topic_c,topics_c )
 
 topic_data<-left_join(topic_data,topic_df,by=c("topic"="topic_c"))
@@ -250,43 +283,49 @@ topic_data %>% group_by(time_1min,topics_c) %>% count() %>%
   ggtitle("Topics Trend from 1700-2130")
 ```
 
-From the topic trend distribution, we can see that chatter topic 1-5 are spreaded all over the time period, and the number of junk posts are small and evenly distributed. While the peaks of key major events are very obvious at certain point of time. 
+From the topic trend distribution, we can see that chatter topic 1-5 are spread all over the time period, and the number posts are small and randomly distributed. While the peaks of key major events are very obvious at certain point of time. 
 
-In summary of topic modeling techniques and visualization, we can identify major event from junk/chatter/spam, and the topic trend visualization can help the audience know about temporal pattern of meanningful events distribution.
+In summary of topic modeling techniques and visualization, we can identify major event from junk/chatter/spam, and the topic trend visualization can help the audience know about temporal pattern of meaningful events distribution.
 
+__Biterm Topic Modeling__
+The [Biterm Topic Model](https://github.com/bnosac/BTM) (BTM) is a word co-occurrence based topic model that learns topics by modeling word-word co-occurrences patterns, which is a generative model. In the generation procedure, a biterm is generated by drawing two words independently from a same topic z.
 
 ```{r,echo=FALSE,results=FALSE}
 #Tokenize data
-# tidytxtdata<- tidy(dtm)
-#                     
-# tidytxtdata <- tidytxtdata%>% #Remove the count column
-#   select(-count)
-# tidytxtdata <- tidytxtdata%>% #Change the column name 'term' to 'word' so that we can get rid of stopwords later
-#   rename(word = term)
-# 
-# 
-# #Remove stopwords
-# tidytxtdata <- tidytxtdata%>%
-#   anti_join(stop_words)
-# 
-# 
-# #Use the btm model
-# set.seed(321)
-# model <- BTM(tidytxtdata, k = 20, beta = 0.01, background = TRUE, iter = 500, trace = 100) #Run the model
-# 
-# topicterms <- terms(model, top_n = 10) #View the topics
-# #topicterms
-# 
-# library(textplot)
-# library(ggraph)
-# library(concaveman)
-# plot(model)
+tidytxtdata<- tidy(dtm)
+
+tidytxtdata <- tidytxtdata%>% #Remove the count column
+  select(-count)
+tidytxtdata <- tidytxtdata%>% #Change the column name 'term' to 'word' so that we can get rid of stopwords later
+  rename(word = term)
+
+
+#Remove stopwords
+tidytxtdata <- tidytxtdata%>%
+  anti_join(stop_words)
+
+
+#Use the btm model
+set.seed(321)
+model <- BTM(tidytxtdata, k = 10, beta = 0.01, background = TRUE, iter = 500, trace = 100) #Run the model
+
+topicterms <- terms(model, top_n = 10) #View the topics
+#topicterms
+
+library(textplot)
+library(ggraph)
+library(concaveman)
+plot(model)
 ```
-### __Tweets and Retweets Comparison of Users__
 
-Then, let's take a closer look of the relationship of number of tweets and re-tweets from a single author. 
+By applying BTM visualization, topic are clusterd in different colors as shown above and words in bold front indicate higher importance in terms of co-occurrence with other words in same topic, which helps to distinguish the meaningful events from typical chatter/junk/spam. For instance, topics in lightblue (with words world-wait-start-improve), lightgreen (with words stop stand) pink (with word mind) have relatively small size of words and tends to have chatter contents. And topic with word life/success in bold face are life related contents which has no meaning. While for topics like fire, van, police, pok rally are more meaningful events in the community. 
 
-```{r,fig.width=15}
+
+### __Tweets/Retweets and Unique Contents__
+
+Then, to derive the feature from tweets and re-tweets cotents. I calculated the unique ratio- number of unique contents devided by total tweets of a single user- and reteweet ratio - number of retweets devided by number of total tweets of a single user. These 2 indexes can help us distinguish influential users and "junk" users.
+
+```{r}
 tweet<-data %>%
   filter(author!="NA") %>% 
   group_by(author) %>%
@@ -298,47 +337,75 @@ retweet<-data %>%
   count()%>% 
   ungroup()
 
+repeat_data<-data %>%
+  filter(author!="NA") %>% 
+  group_by(author,message) %>%
+  count() %>% 
+  ungroup() %>% 
+  group_by(author) %>%
+  count() %>% 
+  ungroup()
+
+
 
 colnames(tweet)[2]<-"tweet"
 colnames(retweet)[2]<-"retweet"
-
+colnames(repeat_data)[2]<-"repeat"
 
 tweet_retweet<-left_join(tweet, retweet, by = c("author"="RT_from"))
+tweet_retweet<-left_join(tweet_retweet, repeat_data, by = c("author"="author"))
 
-is.na(tweet_retweet$retweet)<-0
+
+
 
 tweet_retweet$retweet_ratio<- tweet_retweet$retweet/tweet_retweet$tweet
-tweet_retweet$tweet_scale <-scale(tweet_retweet$tweet)
-tweet_retweet$tweet_scale <-as.numeric(tweet_retweet$tweet_scale)
+tweet_retweet$unique_ratio <-tweet_retweet$'repeat'/tweet_retweet$tweet
 
-tweet_retwee<-tweet_retweet %>% rename(id=author)
-
-plot_ly(data=tweet_retweet,
-        x=~retweet_ratio,
-        y=~tweet_scale,
-        text= ~paste("Author:",author,
-                     "Tweet:",tweet,
-                     "Re-Tweet",retweet))%>% layout(autosize = F,title="Authors' Tweet and Reweet Status")
-```
-
-```{r}
-dt<-subset(data,select=c(timestamp,author,message))
-dt$timestamp<-str_replace_all(dt$timestamp,"2014-01-23 ","")
-dt$message<-iconv(dt$message, 'utf-8', 'ascii', sub='')
-tweet_retweet_2<-subset(tweet_retweet,select=c(author,tweet,retweet))
-dt<-left_join(dt,tweet_retweet_2,by=c("author"="author"))
-dt<-dt %>% filter(author!="")
-# dt<-dt%>% mutate_if(is.character, ~gsub('[^ -~]', '', .)) # remove characters non UTF-8
-DT::datatable(dt)
+tweet_retweet$retweet<-ifelse(is.na(tweet_retweet$retweet),0,tweet_retweet$retweet)
+tweet_retweet$retweet_ratio<-ifelse(is.na(tweet_retweet$retweet_ratio),0,tweet_retweet$retweet_ratio)
 
 
+tweet_retweet_2<-tweet_retweet %>% filter(unique_ratio<0.8 | retweet_ratio>=2)
+
+ggplot(data=tweet_retweet_2,aes(x=reorder(author,tweet)))+
+  geom_bar(aes(y=tweet),stat = "identity",fill="blue",alpha=0.5)+
+  geom_bar(aes(y=retweet),stat = "identity",fill="red",alpha=0.4)+
+  geom_point(mapping=aes( y=unique_ratio*1300), color="black",size=4)+
+  scale_y_continuous(limits=c(0, 1300),sec.axis = sec_axis(~ ./1300,name = "Unique Ratio"))+
+  theme(axis.text.x = element_text(size=8, angle=45),
+  panel.border = element_blank(), 
+  panel.background = element_blank(),
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(), 
+  axis.line = element_line(colour = "black"))+
+  ggtitle("Tweets/Retweets and Unique Tweets Ratio")
 ```
 
 
-From the chart above, we can notice that user with number of tweets does not have any retweets, such as @Clevvah4Evah, @KronosQuoth are mainly posting junk/spam blogs. On the other hand, authors with high re-tweet frequency are HomelandIlluminations,
+
+```{r,echo=FALSE}
+# dt<-subset(data,select=c(timestamp,author,message))
+# dt$timestamp<-str_replace_all(dt$timestamp,"2014-01-23 ","")
+# dt$message<-iconv(dt$message, 'utf-8', 'ascii', sub='')
+# tweet_retweet_2<-subset(tweet_retweet,select=c(author,tweet,retweet))
+# dt<-left_join(dt,tweet_retweet_2,by=c("author"="author"))
+# dt<-dt %>% filter(author!="")
+# # dt<-dt%>% mutate_if(is.character, ~gsub('[^ -~]', '', .)) # remove characters non UTF-8
+# DT::datatable(dt)
+
+```
+
+By filtering unique_ratio less than 0.8 or retweet_ratio>=2
+User with number of tweets does not have any re-tweets and the unique contents of their tweets is low, such as @Clevvah4Evah, @KronosQuoth, and they are mainly posting junk/spam blogs. 
+
+For other low unique ratio , users like @grassGreeener,@cheapgoods998,@rockinHW,@junkman377,@carjunkers,@reggierockin776 posting repeated advertisement/spam/junk contents are also "junk" users.
+
+On the other hand, authors with high re-tweet frequency are HomelandIlluminations,
 @AbilaPost, @KronosStar,  @CentralBulletin , @NewsOnlineToday , and @InternationalNews, of which the post were more active and meaningful information to the public.
 
 __Network Visualization in detecting chatter/spam/junk__
+
+Visnetwork packages in R provided interactive capability for network visualization. 
 
 ```{r}
 
@@ -384,7 +451,7 @@ RT_graph <- tbl_graph(nodes=RT_nodes_aggregated,
 
  visNetwork(RT_nodes_aggregated, 
             RT_edges_aggregated_viz , 
-            main = "Retweet Network and Retweet Counts")%>%
+            main = "Retweet Network",width="100%", height="400px")%>%
    visOptions(highlightNearest = TRUE)%>%
    visNodes(label="label",color = list(background = "lightblue", 
                         border = "darkblue",
@@ -395,11 +462,11 @@ RT_graph <- tbl_graph(nodes=RT_nodes_aggregated,
 
 
 
-Visnetwork packages in R provided interactive capability for network visualization. For the plot above, click the nodes and zoom in the graph, the selected node and its network  will be highlighted, which can provided the information of how many people are directly affected by the original author and the size of the dot indicates the total number of posts by users. 
+For the plot above, click the nodes and zoom in the graph, the selected node and its network  will be highlighted, which can provided the information of how many people are directly affected by the original author and the size of the dot indicates the total number of posts by users. 
 
 This chart can be applied to answer quetions 1 and 2.
 
-From the chart, we can tell thatthe authors in the center like @HomelandIlluminations/@AbilaPost/@KronosStar/@CentralBulletin/@NewsOnlineToday/@InternationalNews have affected the public most directly and widely. And users like @Clevvah4Evah, @KronosQuoth have quite number of junk posting with no re-tweets, while other users with no link post mainly chatter contents.
+From the chart, we can tell thatthe authors in the center like @HomelandIlluminations/@AbilaPost/@KronosStar/@CentralBulletin/@NewsOnlineToday/@InternationalNews have affected the public most directly and widely. And users like @Clevvah4Evah, @KronosQuoth have quite number of junk posting with no re-tweets, while other users with no link post mainly chatter/spam contents.
 
 
 
@@ -524,26 +591,17 @@ __4.3 If you were able to send a team of first responders to any single place, w
 
 To send team of responders and make sure right location and short responding time, we can take a closely look location-tagged posts or posts contents with locations.
 
+
+### Restrospective
+
 __On retrospective appraoch, I will send team of first respondents to dolphin dancing apartment.__
 
 Reasons as below,
 
-1) The fire event at dolphin get the most attention and risk from the public according to previous analysis. The word file, dolphin department was frequently mentioned in the microblog by mainstream media and individual users.
+1) The fire event at dolphin get the most attention and risk from the public according to previous analysis, causing the most injures. In addition,  dolphin department was frequently mentioned in the microblog by mainstream media and individual users.
 
 2)  Comparing to other event, some are reported by only a few individual users with vague locations mentioned in the latter time, the fire at dolphin apartment has been reported with an accurate location at early time around 18:40. 
 
-
-```{r}
-packages= c('sp','sf','gridExtra','mapview')
-
-for(p in packages){
-  if(!require(p,character.only= T)){
-    install.packages(p)
-    }
-  library(p, character.only = T)
-}
-
-```
 
 
 ```{r}
@@ -560,7 +618,7 @@ dangermice <- data_location %>%
 
 
 p1<-ggplot()+
-  geom_sf(data=abila,size=1,color="black",fill="cyan1")+
+  geom_sf(data=abila,size=0.2,color="black",fill="cyan1")+
   ggtitle("Fire at Dancing Dolphin Apartment")+
   coord_sf()+
   theme(panel.background = element_rect(fill = "transparent"), # bg of the panel
@@ -574,7 +632,7 @@ p1<-ggplot()+
   axis.ticks = element_blank(),
   axis.title.y=element_blank(),
   axis.title.x =element_blank()) +
-  geom_point(data = dangermice, aes(x = longitude,y=latitude),color="red",size=5)
+  geom_point(data = dangermice, aes(x = longitude,y=latitude),color="red",size=2)
 
 
 
@@ -589,6 +647,7 @@ data_fire_words <- data_fire %>%
   arrange(desc(n))
 
 
+
 p2<- ggplot(head(data_fire_words,50),aes(label = word,
            size = n,color=n)) +
   geom_text_wordcloud()+
@@ -599,21 +658,39 @@ p2<- ggplot(head(data_fire_words,50),aes(label = word,
 
 data$time_1min<-str_replace_all(data$time_1min,"2014-01-23 ","")
 
+
+# data$time=ymd_hms(data$time_1min)
+# 
+# p3<-data %>% 
+#   filter(str_detect(message,"fire|explosion|dolpin")) %>% 
+#   group_by(time) %>% 
+#   count() %>%
+#   ungroup() %>% 
+#   ggplot(aes(x=time))+
+#   geom_bar(aes(y=n), stat = "identity",fill = "black")+
+#   theme(axis.title.y=element_blank(),
+#         axis.ticks.y=element_blank(),
+#         axis.text.y=element_blank(),
+#         axis.title.x=element_blank(),
+#         panel.background = element_rect(fill = "transparent"),
+#         axis.ticks.x=element_blank(),
+#         axis.text.x = element_text(angle = 90, hjust = 1))+
+#         ggtitle("Tweets Trend Related to Dolphin Apartment")
+
+
+
+data$time=cut(data$timestamp, breaks="1 min")
+data$time =ymd_hms(data$time)
+
 p3<-data %>% 
   filter(str_detect(message,"fire|explosion|dolpin")) %>% 
-  group_by(time_1min) %>% 
+  group_by(time) %>% 
   count() %>%
   ungroup() %>% 
-  ggplot(aes(x=time_1min))+
+  ggplot(aes(x=time))+
   geom_bar(aes(y=n), stat = "identity",fill = "black")+
-  theme(axis.title.y=element_blank(),
-        axis.ticks.y=element_blank(),
-        axis.text.y=element_blank(),
-        axis.title.x=element_blank(),
-        panel.background = element_rect(fill = "transparent"),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank())+
-        ggtitle("Posts with Dolphin Apartment")
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+        ggtitle("Tweets Trend Related to Dolphin Apartment")
 
 
 # Move to a new page
@@ -631,53 +708,22 @@ print(p2, vp = define_region(1, 2))
 print(p3, vp = define_region(2, 1:2))
 ```
 
+### Real-Time 
 
-__If it's real time, I will arrange the trajectory of the team according to the status of the event and its location.__
-
-
-
+__If it's real time, I will arrange the trajectory of the team according to the status of the event and its location__
 
 
+In the real time events, I will monitor the tweets/retweerts trend, risk level and location-stamped posts. 
 
+At 19:20:00 pm, hennyhenhendrix posted a location-stamped post -"Some moron in a black van just hit my car!" then, in 2 minutes, all call center alramed - "ALL UNITS BROADCAST-FELONY HIT & RUN-BLACK VAN/PARTIAL PLATE #L829" which brings the event to very high attention. The team should be sent to the location of 547 N. Schaber Ave as reporeted by call center. And then the team should follow the trajectory of the location based by call center reporting the same , 
 
-```{r}
-#head(abila)
-
-abila<-st_read('data/MC3/Geospatial/Abila.shp',quiet=TRUE)
-
-# abila2<-abila %>% 
-# filter(FENAME==c('Antoniadou'),FEDIRP=='N')
-# 
-# abila3<-abila %>% 
-# filter(FENAME==c('Estos'),FEDIRP=='N')
-
-abila4<-abila %>%
-filter(FENAME==c('Achilleos','Madeg'),FEDIRP=='N',FETYPE=='St')%>% 
-  mutate(geometry2=st_touches(geometry)) 
-  
-#,TLID==c(184646109,184646149)   
-  
-abila4<-abila4 %>%   mutate(long = unlist(map(geometry,2)),
-          lat = unlist(map(geometry,3)))
-# abila_cc <- abila4 %>%
-#   summarize(do_union=FALSE) %>%
-#   st_cast("POINT")
-
+Egeou Ave / Ipsilantou Ave - N. Hacia St / N. Brada St
+ -N. Antoniadou St / N. Estos St,  Profitou Ilia St / Egeou Ave, and N. Limnou St / N. Achilleos St ( 7:38:22 pm)
 
  
-ggplot(data=abila)+
-  geom_sf()+
-  ggtitle("Abila")+
-  #geom_point(data = abila4,mapping = aes(x=long,y=lat),color="red")
-  # coord_sf()
-  # geom_line(data=data_location, aes(x=longitude, y=latitude), color="red", size=1)+
+ At the same time, it is suggested that authority keep monitoring the location-stamped post in the community to keep tracking the black van. Users like truccotrucco and sofitees
+were key reporters with loacted near to N. Limnou St / N. Achilleos St reporting the hostage regarding black van. The team should follow their location and provide first aid at their location.
 
-  # geom_sf(data=abila3,size=1,color="red",fill="cyan1")+
-  # geom_sf(data=abila2,size=1,color="red",fill="cyan1")+
-  geom_sf(data=abila4,size=1,color="red",fill="cyan1")
-
-
-```
 
 ```{r}
 abila<-st_read('data/MC3/Geospatial/Abila.shp',quiet=TRUE)
@@ -711,14 +757,7 @@ df_ccdata$street1 <- str_replace_all(df_ccdata$street1," ","")
 df_ccdata$street2 <- str_replace_all(df_ccdata$street2," [St|Ave]","")
 df_ccdata$street2 <- str_replace_all(df_ccdata$street2," ","")
 
-```
-
-
-
-```{r}
-
-#dx[dx$ID %in% dx$ID[duplicated(dx$ID)],]
-# abila_tomap<-abila[abila$geometry %in% abila$geometry[duplicated(abila$geometry)],]
+# Read Abila Map
 abila<-st_read('data/MC3/Geospatial/Abila.shp',quiet=TRUE)
 
 p = npts(abila, by_feature = TRUE)
@@ -726,43 +765,6 @@ abila <- cbind(abila, p) %>%
   filter(p>1)
 abila<-abila %>% mutate(geometry2=st_touches(geometry))
 
-```
-
-```{r, echo=FALSE}
-# df_ccdata<-data %>% 
-#   filter(type=="ccdata") %>% 
-#   separate(location,c("number","street"),sep="(?<=[0-9])",convert=T) %>% 
-#   drop_na(street) %>% 
-#   mutate(number= as.integer(number)) %>% 
-#   mutate(number= floor(number/100)*100)
-# 
-# 
-# abila_2<- abila %>% 
-#   mutate(From=pmin(FRADDL,FRADDR)) %>% 
-#   mutate(From=floor(From/100)*100) %>% 
-#   unite(Part1,FEDIRP:FENAME,sep=". ",remove=F,na.rm=T) %>% 
-#   unite(FullName,c(Part1, FETYPE),sep=" ")
-# 
-# p = npts(abila_2, by_feature = TRUE)
-# abila_2 <- cbind(abila, p) %>%
-#   filter(p>1)%>% 
-#   mutate(geometry=st_centroid(geometry))
-
-
-
-#inner_join(abila_2,df_ccdata,by=c("From"="number","FullName"="street"))
-# 
-# 
-# ggplot(data = abila)+
-#   geom_sf()+
-#   geom_sf(data=abila_st_plus,shape=23,fill="darked")
-
-```
-
-
-
-```{r}
-abila<-st_read('data/MC3/Geospatial/Abila.shp',quiet=TRUE)
 
 l1<-c("184646017","184646189")
 l11<-c("184646189","184646726")
@@ -830,32 +832,42 @@ mutate(geometry2=st_touches(geometry)) %>%
 
 data_location <- data %>% 
   filter(longitude!="",str_detect(message,"hit|van|shoot|driver") ) %>% 
-  add_count(longitude,latitude,author)
+  add_count(longitude,latitude,author) %>% 
+  rename(Witness=author)
 
 
-abila5$label=c("fire","hit","van","van","van","van")
+abila5$label=c("van observation","van observation","van observation","fire","car/bike hit","van observation")
+
 
 ggplot()+
-  geom_sf(data=abila,size=1,color="black",fill="cyan1")+
+  geom_sf(data=abila,size=1,color="grey",fill="cyan1")+
   ggtitle("Abila")+
+  geom_point(data = data_location, aes(x = longitude,y=latitude,color=Witness),size=3)+
+  geom_point(data = abila5,mapping = aes(x=long,y=lat,label=label),color="red",size=3)+
+  geom_text(data = abila5,mapping = aes(x=long,y=lat,label=label),color="red",size=3,vjust=2,hjust=-0.1)+
   theme(axis.title.y=element_blank(),
         axis.ticks.y=element_blank(),
         axis.text.y=element_blank(),
         axis.title.x=element_blank(),
         panel.background = element_rect(fill = "transparent"),
         axis.text.x=element_blank(),
-        axis.ticks.x=element_blank(),
-        legend.title= element_blank(),
-        legend.position = "none")+
-        ggtitle("Located Ccdata and Microblogs")+
-  geom_point(data = data_location, aes(x = longitude,y=latitude,color=author,size=5))+
-  geom_point(data = abila5,mapping = aes(x=long,y=lat,label=label),color="red",size=3)+
+        axis.ticks.x=element_blank())+
+        ggtitle("Located Ccdata and Microblogs for Real-time Tracking")+
   geom_text()+
-  geom_line(data = abila1,mapping = aes(x=long,y=lat),color="red",size=1)+
-  geom_line(data = abila11,mapping = aes(x=long,y=lat),color="red",size=1)+
-  geom_line(data = abila2,mapping = aes(x=long,y=lat),color="red",size=1)+
-  geom_line(data = abila3,mapping = aes(x=long,y=lat),color="red",size=1)+
-  geom_line(data = abila4,mapping = aes(x=long,y=lat),color="red",size=1)
+  geom_line(data = abila1,mapping = aes(x=long,y=lat),color="red",size=1,linetype = "dashed")+
+  #geom_text(aes(x = 0, y = 0, label = "AAPL"))+
+  geom_line(data = abila11,mapping = aes(x=long,y=lat),color="red",size=1,linetype = "dashed")+
+  geom_line(data = abila2,mapping = aes(x=long,y=lat),color="red",size=1,linetype = "dashed")+
+  geom_line(data = abila3,mapping = aes(x=long,y=lat),color="red",size=1,linetype = "dashed")+
+  geom_line(data = abila4,mapping = aes(x=long,y=lat),color="red",size=1,linetype = "dashed")
+
+```
+```{r}
+data_location$timestamp<-format(data_location$timestamp, format = "%H:%M:%S")
+
+DT::datatable(subset(data_location,select=c(timestamp,Witness,message,longitude,latitude)))
+```
+```{r}
 
 ```
 
@@ -863,6 +875,20 @@ ggplot()+
 
 Junghoon Chae, Dennis Thom, Yun Jang, SungYe Kim, Thomas Ertl, David S. Ebert,
 Public behavior response analysis in disaster events utilizing visual analytics of microblog data,Computers & Graphics,Volume 38,2014,Pages 51-60,ISSN 0097-8493,https://doi.org/10.1016/j.cag.2013.10.008.
+
+[Biterm Topic Model](https://github.com/bnosac/BTM)
+
+[NLP in R: Topic Modeling](https://www.kaggle.com/rtatman/nlp-in-r-topic-modelling)
+
+[timevis](https://github.com/daattali/timevis)
+
+[Textnets](https://github.com/cbail/textnets)
+
+[Text Mining with R](https://www.tidytextmining.com/)
+
+[Visual Analytics Benchmark Repository-VAST Challenge 2014](http://visualdata.wustl.edu/varepository/VAST%20Challenge%202014/challenges/MC3%20-%20Real-Time,%20Streaming%20Social%20Media/)
+
+
 
 
 

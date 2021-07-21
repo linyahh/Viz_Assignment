@@ -1,8 +1,0 @@
-"0","dt<-subset(data,select=c(timestamp,author,message))"
-"0","dt$timestamp<-str_replace_all(dt$timestamp,""2014-01-23 "","""")"
-"0","dt$message<-iconv(dt$message, 'utf-8', 'ascii', sub='')"
-"0","tweet_retweet_2<-subset(tweet_retweet,select=c(author,tweet,retweet))"
-"0","dt<-left_join(dt,tweet_retweet_2,by=c(""author""=""author""))"
-"0","dt<-dt %>% filter(author!="""")"
-"0","# dt<-dt%>% mutate_if(is.character, ~gsub('[^ -~]', '', .)) # remove characters non UTF-8"
-"0","DT::datatable(dt)"
