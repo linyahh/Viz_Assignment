@@ -2073,7 +2073,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <a href="Literature_Review.html">Literature Review</a>
 <a href="Data_Preprocessing_and_Exploratory.html">Preprocessing and EDA</a>
 <a href="Question_Answer.html">Question Answer</a>
-<a href="about.html">About</a>
+<a href="Reference.html">Reference</a>
 <a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
 </div>
 </nav>
@@ -2103,7 +2103,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <nav class="l-text toc figcaption" id="TOC">
 <h3>Contents</h3>
 <ul>
-<li><a href="#import-packages-and-social-media-stream-data">3.1 Import packages and social media stream data</a></li>
+<li><a href="#import-packages-and-social-media-stream-data">3.1 Import packages and social media stream data</a><ul>
+<li><a href="#import-packages">Import Packages</a></li>
+<li><a href="#import-dataset">Import Dataset</a></li>
+</ul></li>
 <li><a href="#manipulate-datetime">3.2 Manipulate Datetime</a></li>
 <li><a href="#text-data-preprocessing">3.3 Text Data Preprocessing</a></li>
 <li><a href="#eda">3.4 EDA</a><ul>
@@ -2114,19 +2117,19 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </nav>
 </div>
 <h2 id="import-packages-and-social-media-stream-data">3.1 Import packages and social media stream data</h2>
-<p>Import Packages</p>
+<h3 id="import-packages">Import Packages</h3>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>Show code</summary>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>packages</span><span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'sf'</span>,<span class='st'>'clock'</span>,<span class='st'>'tmap'</span>,
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>packages</span><span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
             <span class='st'>'tidyverse'</span>,<span class='st'>'data.table'</span>,<span class='st'>'lubridate'</span>,
             <span class='st'>'textclean'</span>,<span class='st'>'tm'</span>,<span class='st'>'wordcloud'</span>,<span class='st'>'text2vec'</span>,
             <span class='st'>'topicmodels'</span>,<span class='st'>'tidytext'</span>,<span class='st'>'textmineR'</span>,<span class='st'>'quanteda'</span>,
             <span class='st'>'BTM'</span>,<span class='st'>'textplot'</span>,<span class='st'>'concaveman'</span>,<span class='st'>'ggwordcloud'</span>,
             <span class='st'>'qdapDictionaries'</span>,<span class='st'>'textstem'</span>,<span class='st'>'devtools'</span>,<span class='st'>'textnets'</span>,
-            <span class='st'>'ggiraph'</span>,<span class='st'>'plotly'</span>,<span class='st'>'igraph'</span>, <span class='st'>'tidygraph'</span>, 
-             <span class='st'>'ggraph'</span>, <span class='st'>'visNetwork'</span>,<span class='st'>'udpipe'</span>,<span class='st'>'grid'</span><span class='op'>)</span>
+            <span class='st'>'igraph'</span>, <span class='st'>'tidygraph'</span>, 
+             <span class='st'>'ggraph'</span>, <span class='st'>'visNetwork'</span>,<span class='st'>'udpipe'</span>,<span class='st'>'grid'</span>,<span class='st'>'sp'</span>,<span class='st'>'sf'</span>,<span class='st'>'gridExtra'</span>,<span class='st'>'mapview'</span><span class='op'>)</span>
 
 <span class='kw'>for</span><span class='op'>(</span><span class='va'>p</span> <span class='kw'>in</span> <span class='va'>packages</span><span class='op'>)</span><span class='op'>{</span>
   <span class='kw'>if</span><span class='op'>(</span><span class='op'>!</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'>p</span>,character.only<span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
@@ -2138,7 +2141,21 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 </details>
 </div>
-<p>Import Dataset</p>
+<p>Main R packages applied:</p>
+<p><strong>1) Data Cleaning</strong></p>
+<p>‘tidyverse’, ‘lubridate’</p>
+<p><strong>2) Text Data Processing</strong></p>
+<p>‘textclean’,‘tidytext’,‘BTM’,‘topicmodels’,‘textmineR’,</p>
+<p><strong>3) Data Visualization</strong></p>
+<p><em>Basic Charts-</em></p>
+<p>‘tidyverse’</p>
+<p><em>Text-</em></p>
+<p>‘textplot’,‘ggwordcloud’,‘wordcloud’,‘textstem’,‘textnets’</p>
+<p><em>Network-</em></p>
+<p>‘ggraph’, ‘visNetwork’</p>
+<p><em>Map-</em></p>
+<p>‘sp’,‘sf’,‘gridExtra’,‘mapview’</p>
+<h3 id="import-dataset">Import Dataset</h3>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>Show code</summary>
@@ -2183,6 +2200,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </table>
 </div>
 <h2 id="manipulate-datetime">3.2 Manipulate Datetime</h2>
+<p>Change datetime string to timestamp by using lubridate package.</p>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>Show code</summary>
@@ -2292,7 +2310,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </tbody>
 </table>
 </div>
-Get Hashtags
+<p>Get Hashtags with function</p>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>Show code</summary>
@@ -2339,20 +2357,9 @@ Get Hashtags
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#convert dataframe to corpus</span>
 <span class='va'>docs</span> <span class='op'>&lt;-</span> <span class='fu'>Corpus</span><span class='op'>(</span><span class='fu'>VectorSource</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>cleaned</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'>inspect</span><span class='op'>(</span><span class='va'>docs</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>)</span>
-</code></pre>
-</div>
-</details>
-<pre><code>&lt;&lt;SimpleCorpus&gt;&gt;
-Metadata:  corpus specific: 1, document level (indexed): 0
-Content:  documents: 2
+<span class='co'>#inspect(docs[1:2])</span>
 
-[1] follow us                                      
-[2] miss moment follow live coverage pok rally park</code></pre>
-<details>
-<summary>Show code</summary>
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='co'># Create a document-term-matrix</span>
+<span class='co'># Create a document-term-matrix</span>
 
 <span class='va'>dtm</span> <span class='op'>&lt;-</span> <span class='fu'>TermDocumentMatrix</span><span class='op'>(</span><span class='va'>docs</span><span class='op'>)</span> 
 <span class='va'>matrix</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span><span class='op'>(</span><span class='va'>dtm</span><span class='op'>)</span> 
@@ -2460,7 +2467,7 @@ Content:  documents: 2
 </details>
 <p><img src="Data_Preprocessing_and_Exploratory_files/figure-html5/unnamed-chunk-7-1.png" width="1152" /></p>
 </div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

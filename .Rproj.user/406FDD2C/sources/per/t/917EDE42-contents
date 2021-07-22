@@ -25,17 +25,17 @@ knitr::opts_chunk$set(fig.retina = 3,
 
 ## 3.1 Import packages and social media stream data
 
-Import Packages
+### Import Packages
 
 
 ```{r}
-packages= c('sf','clock','tmap',
+packages= c(
             'tidyverse','data.table','lubridate',
             'textclean','tm','wordcloud','text2vec',
             'topicmodels','tidytext','textmineR','quanteda',
             'BTM','textplot','concaveman','ggwordcloud',
             'qdapDictionaries','textstem','devtools','textnets',
-            'ggiraph','plotly','igraph', 'tidygraph', 
+            'igraph', 'tidygraph', 
              'ggraph', 'visNetwork','udpipe','grid','sp','sf','gridExtra','mapview')
 
 for(p in packages){
@@ -46,8 +46,36 @@ for(p in packages){
 }
 ```
 
+Main R packages applied:
 
-Import Dataset
+__1) Data Cleaning__
+
+'tidyverse', 'lubridate'
+
+__2) Text Data Processing__
+
+'textclean','tidytext','BTM','topicmodels','textmineR',
+
+__3) Data Visualization__ 
+
+_Basic Charts-_
+
+'tidyverse'
+
+_Text-_
+
+'textplot','ggwordcloud','wordcloud','textstem','textnets'
+
+_Network-_
+
+'ggraph', 'visNetwork'
+
+_Map-_
+
+'sp','sf','gridExtra','mapview'
+
+
+### Import Dataset
 
 ```{r}
 #read csv file
@@ -66,6 +94,8 @@ knitr::kable(head(data,1), "pipe")
 
 
 ## 3.2 Manipulate Datetime 
+
+Change datetime string to timestamp by using lubridate package.
 
 ```{r, echo=TRUE}
 
@@ -137,7 +167,9 @@ knitr::kable(head(subset(data,select=c("message","cleaned"))), "pipe")
 
 ```
 
-Get Hashtags
+
+Get Hashtags with function
+
 ```{r}
 GetHashtags <- function(tweet) {
 
@@ -171,7 +203,7 @@ Use world cloud to show most frequent words/hastags/tagged users.
 
 #convert dataframe to corpus
 docs <- Corpus(VectorSource(as.character(data$cleaned)))
-inspect(docs[1:2])
+#inspect(docs[1:2])
 
 # Create a document-term-matrix
 

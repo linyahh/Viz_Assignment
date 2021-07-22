@@ -1,5 +1,5 @@
 ---
-title: "Introduction "
+title: "1. Introduction "
 author:
   - name: Linya Huang
   - affiliation: School of Computing and Information Systems, Singapore Management University
@@ -16,11 +16,36 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+## 1.1 Overview
 
-On January 23, 2014, multiple events unfolded in Abila. the challenge is to perform a retrospective analysis based on limited information about what took place. The goal is to identify risks and how they could have been mitigated more effectively.
-From this data, , I will use visual analytics techniques in R to solve questions from [VAST Challenge 2021: Mini-Challenge 3](https://vast-challenge.github.io/2021/MC3.html). The main data sets includes information of collection of microblogs and emergency calls from the days surrounding the disappearance.
+The assignments require students to put the concepts, methods and techniques  learned in class to solve real world problem using visual analytics techniques. Students should also use the assignments to gain hands-on experience on using R data visualisation and data analysis packages to complete the assignment.
+
+## 1.2 Challenge
+
+[VAST Challenge 2021: Mini-Challenge 3](https://vast-challenge.github.io/2021/MC3.html) 
+
+- On January 23, 2014, multiple events unfolded in Abila, the challenge is to perform a retrospective analysis based on limited information about what took place. The goal is to identify risks and how they could have been mitigated more effectively. The main data sets includes information of collection of microblogs and emergency calls from the days surrounding the disappearance.
+
+__Questions__
 
 
+1.Using visual analytics, characterize the different types of content in the dataset. What distinguishes meaningful event reports from typical chatter from junk or spam? Please limit your answer to 8 images and 500 words.
+
+2.Use visual analytics to represent and evaluate how the level of the risk to the public evolves over the course of the evening. Consider the potential consequences of the situation and the number of people who could be affected. Please limit your answer to 10 images and 1000 words.
+
+3.If you were able to send a team of first responders to any single place, where would it be? Provide your rationale. How might your response be different if you had to respond to the events in real time rather than retrospectively? Please limit your answer to 8 images and 500 words.
+
+4.If you solved this mini-challenge in 2014, how did you approach it differently this year?(Not Applicable)
+
+## Submission Instructions
+
+• This is an individual assignment. You are required to work on the assignment and prepare submission individually.
+
+• The assignment report must be written by using R Markdown. It can be in either Distill or blogdown format. You are required to publish the assignment report on Netlify and provide the link on the assignment submission page on elearn.
+
+• Upload the assignment report and data onto your individual Github repository and provide the link on the assignment submission page on eLearn.
+
+• Assignment due is on 25th July 2021 (Sunday), mid-night 11:59pm.
 
 
 

@@ -1,7 +1,7 @@
 ---
 title: "Assignment"
 description: |
-  This is website is for assignment submission of ISSS608 Visual Analytics and Applications.
+  Assignment submission of course ISSS608 Visual Analytics and Applications - Singapore Management University.
 ---
 
 ```{r setup, include=FALSE}

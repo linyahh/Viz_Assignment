@@ -1,0 +1,39 @@
+---
+title: "5. Reference "
+author:
+  - name: Linya Huang
+  - affiliation: School of Computing and Information Systems, Singapore Management University
+date: 07-25-2021
+output:
+  distill::distill_article:
+    code_folding: true
+    toc: true
+    toc_depth: 6
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Acknowledgement
+
+This assignment is guided by [Prof. Kam Tin Seong](https://faculty.smu.edu.sg/profile/kam-tin-seong-486)
+
+
+# Reference
+
+• Junghoon Chae, Dennis Thom, Yun Jang, SungYe Kim, Thomas Ertl, David S. Ebert,
+_Public behavior response analysis in disaster events utilizing visual analytics of microblog data,Computers & Graphics_,Volume 38,2014,Pages 51-60,ISSN 0097-8493,https://doi.org/10.1016/j.cag.2013.10.008.
+
+• [Biterm Topic Model](https://github.com/bnosac/BTM)
+
+• [NLP in R: Topic Modeling](https://www.kaggle.com/rtatman/nlp-in-r-topic-modelling)
+
+• [timevis](https://github.com/daattali/timevis)
+
+• [Textnets](https://github.com/cbail/textnets)
+
+• [Text Mining with R](https://www.tidytextmining.com/)
+
+• [Visual Analytics Benchmark Repository-VAST Challenge 2014](http://visualdata.wustl.edu/varepository/VAST%20Challenge%202014/challenges/MC3%20-%20Real-Time,%20Streaming%20Social%20Media/)
