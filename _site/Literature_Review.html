@@ -2109,6 +2109,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#relationship-or-text-and-text-entities-visualization">2.4 Relationship or text and text entities visualization</a></li>
 <li><a href="#geovisual-analysis">2.5 GeoVisual Analysis</a></li>
 <li><a href="#combination-of-geographical-and-text-visualization">2.6 Combination of Geographical and Text Visualization</a></li>
+<li><a href="#real-time-help-information-platform-for-henan-flood">2.7 Real-time Help Information Platform for Henan Flood</a></li>
 </ul>
 </nav>
 </div>
@@ -2130,14 +2131,16 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </figure>
 <p>This summary chart helps audience to get a quick and clear overview of major event happened in Abila, which is a good review of challenge question 1. In R package, we can apply <a href="https://github.com/daattali/timevis">timevis</a> pacakge to achieve the function, which enables rich and fully interactive timeline visualizations.</p>
 <h2 id="junkspam-detection">2.3 Junk/Spam Detection</h2>
-<p>In <a href="http://visualdata.wustl.edu/varepository/VAST%20Challenge%202014/challenges/MC3%20-%20Real-Time,%20Streaming%20Social%20Media/">Visual Analytics Benchmark Repository 2014</a>, the submission from <a href="http://visualdata.wustl.edu/varepository/VAST%20Challenge%202014/challenges/MC3%20-%20Real-Time,%20Streaming%20Social%20Media/entries/Tianjin%20University/">Tianjin University</a> demonstrated a network approach in identifying junk tweet.</p>
+<p>•In <a href="http://visualdata.wustl.edu/varepository/VAST%20Challenge%202014/challenges/MC3%20-%20Real-Time,%20Streaming%20Social%20Media/">Visual Analytics Benchmark Repository 2014</a>, the submission from <a href="http://visualdata.wustl.edu/varepository/VAST%20Challenge%202014/challenges/MC3%20-%20Real-Time,%20Streaming%20Social%20Media/entries/Tianjin%20University/">Tianjin University</a> demonstrated a network approach in identifying junk tweet.</p>
 <p><img src="image/Re-tweet%20network.png" alt="Retweet Network" /> They think “the size of the nodes represents the number of the blog being post. Notice that there are several nodes which have the larger size but no relationship with others which means theirs blogs are ignored by others.”.</p>
 <p>This is a very good intuition to visualize center and edges microblog users. In addition, I think this visualization can be further improved with visnetwork interactivity, that users can click the node and get more information about the nodes (authors,post,number of retweets and so on.)</p>
-<p><a href="http://visualdata.wustl.edu/varepository/VAST%20Challenge%202014/challenges/MC3%20-%20Real-Time,%20Streaming%20Social%20Media/entries/University%20of%20Buenos%20Aires%20-%20Rukavina/">Universidad de Buenos Aires</a> analyzed the number of messages by author. With the calculation of spam index, they found that a low spam index value indicates many messages with the same text and thus is associated with a high likelihood of spam.</p>
+<p>•<a href="http://visualdata.wustl.edu/varepository/VAST%20Challenge%202014/challenges/MC3%20-%20Real-Time,%20Streaming%20Social%20Media/entries/University%20of%20Buenos%20Aires%20-%20Rukavina/">Universidad de Buenos Aires</a> analyzed the number of messages by author. With the calculation of spam index, they found that a low spam index value indicates many messages with the same text and thus is associated with a high likelihood of spam.</p>
 <p><img src="image/spam_index.png" alt="Spam Index" /> This is a good inspiration of feature engineering of the given dataset. The visualization can be further improved as the line chart was misused on discrete value and users’ retweet pattern can be added for more insights.</p>
 <h2 id="relationship-or-text-and-text-entities-visualization">2.4 Relationship or text and text entities visualization</h2>
 <p><a href="https://github.com/cbail/textnets">Textnets</a> is a R package for automated text analysis using network techniques.It provides network for both text and text entities, which provides visualization ability to uncover correlation of texts in documents.</p>
-<p><img src="image/Textnet.png" alt="Textnet with R" /> { width=70% }</p>
+<figure>
+<img src="image/Textnet.png" style="width:70.0%" alt="" /><figcaption>Textnet with R</figcaption>
+</figure>
 <p>This visualization can be applied in the question 2 in answering the potential consequences of the situation and the number of people who could be affected via network graph.</p>
 <h2 id="geovisual-analysis">2.5 GeoVisual Analysis</h2>
 <p>Several benchmark teams in 2014 had insightful geovisual analytics with microblog text analytics,</p>
@@ -2148,6 +2151,13 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <p>It is also worth mentioning one of a innovated combination visualization from <a href="http://visualdata.wustl.edu/varepository/VAST%20Challenge%202014/challenges/MC3%20-%20Real-Time,%20Streaming%20Social%20Media/entries/Purdue%20University/">Purdue University</a>.</p>
 <p><img src="image/Purdue%20University-combined.png" alt="Combined Visualization from Purdue University" /> As highliged in the example as above, a)temporal pattern of the microblog posting from different sources are tracked properly, b) word cloud of the most frequent words provided information of popular words/topics discussed, C) network graph provides the key opinion leader and its impact to the public, d) and e) detailed microblog posted by ccdata and mbdata, besides, they highlighed the geo location of the events and streets mentioned by call center.</p>
 <p>This visualization is a very good inspiration on how a live tweets can be tracked and visualized with single data set. The analytics has applied various feature engineering techniques for numerical variables, text mining and network relationships. The fruitful and dynamic information from this single combination graph can really help audience to understand the overall situation and make quick decisions or responses to the event.</p>
+<h2 id="real-time-help-information-platform-for-henan-flood">2.7 Real-time Help Information Platform for Henan Flood</h2>
+<p>Social media platforms do not usually provide geometry visualizations of microblogs as it has to protect users privacy. However,such visualizations might be helpful for emergency event rescue. For example , recently I found a very good visualization application-<a href="https://henan.tianshili.me">Help Information Platform for Henan Flood</a> created by a group of PHD students.</p>
+<p>To response to Henan Flood, the team built the <a href="https://u9u37118bj.feishu.cn/docs/doccn3QzzbeQLPQwNSb4Hcl2X1g">project</a> to help display help-seeking Wei-blog so that the easily overlooked voice can be heard. Wei-blog is the main social media platform in China but it lacks the visualization tool. This website strives to visually display the help-seeking information on Weibo on the map, to facilitate the highlighting of the help-seeking information in remote areas, and to assist rescuers in formulating rescue plans based on the map. On the other hand, it can also be more intuitive to understand the rescue situation in various places.</p>
+<figure>
+<img src="image/henan.png" alt="" /><figcaption>Henan Flood Wei-blog Rescue Map</figcaption>
+</figure>
+<p>This is an in-time visualization application for emergency event management and it really helps the rescue and volunteer team to provide quick response. Displaying information on the map to increase exposure is a good inspiration in answering Q3 of responding to the events in real time.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->

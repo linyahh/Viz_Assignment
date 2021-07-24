@@ -1,5 +1,5 @@
 ---
-title: "Question Answer"
+title: "4. Question Answer"
 description: |
    Use visual analytics to analyze the available data and evaluate the changing levels of risk to the public and recommend actions.
 author:
@@ -24,26 +24,6 @@ knitr::opts_chunk$set(fig.retina = 3,
 ```
 
 
-```{r,echo=FALSE}
-
-packages= c('sf','clock','tmap',
-            'tidyverse','data.table','lubridate',
-            'textclean','tm','wordcloud','text2vec',
-            'topicmodels','tidytext','textmineR','quanteda',
-            'BTM','textplot','concaveman','ggwordcloud',
-            'textstem','devtools','textnets',
-            'ggiraph','plotly','igraph', 'tidygraph', 
-             'ggraph', 'visNetwork','udpipe','grid')
-
-for(p in packages){
-  if(!require(p,character.only= T)){
-    install.packages(p)
-    }
-  library(p, character.only = T)
-}
-```
-
-
 # 4.Data Visualization for Challenge Questions
 
 
@@ -56,21 +36,13 @@ __4.1 Using visual analytics, characterize the different types of content in the
 ### __Wordcloud trend of 30 minutes time interval__
 
 
-Split data by 30 minutes time interval and perform  worldcloud in each interval, to visualize the most frequent words in the microblog.
+Split data by 30 minutes time interval and perform  worldcloud  to visualize the most frequent words in each interval.
 
 
 ```{r,fig.width=8, fig.height=8,warning=FALSE}
 
 #add id to dataset
 
-data$id <- seq.int(nrow(data))
-
-data_subset=subset(data,select=c("time_30min","cleaned"))
-
-
-data$timestamp <- ymd_hms(data$`date(yyyyMMddHHmmss)`)
-data$time_30min = cut(data$timestamp, breaks="30 min")
-data$id <- seq.int(nrow(data))
 
 data_subset=subset(data,select=c("time_30min","cleaned"))
 
@@ -81,7 +53,7 @@ usenet_words<-data_subset%>%
   count(time_30min,word, sort = TRUE)
 
 
-usenet_words[order(usenet_words$time_30min),]
+#usenet_words[order(usenet_words$time_30min),]
 
 usenet_words$time_30min<-usenet_words$time_30min %>% str_replace_all("2014-01-23 ","")
   
@@ -111,14 +83,14 @@ From the visualization, we can tell the main content discussing in the community
 
 1930-2000 shooting and cops/police;
 
-2100-2131 van/ hostage/ explosion;
+2100-2131 van/ hostage/ explosion.
 
 
 
 ### __TF_IDF of 30 mintunes time interval__
 
 
-Then, by applying Term Frequency – Inverse document frequency (tf-idf) to bigram texts, we can uncover more information compared with uni-grams. 
+Then, by applying Term Frequency – Inverse document frequency (tf-idf) to bigram texts, more information can be uncovered.
 
 
 ```{r,fig.width=12, fig.height=10}
@@ -183,9 +155,9 @@ For instance, from 1700-1800, we know that police presense at pok rally and Dr. 
 
 ### __Topic Modeling - Distinguish Junk/Spam/Chatter from Meaningful Events__
 
-To distinguish meaningful events from chatter/junk/spam messages, I will then apply topic modeling techniques to identify topic in each microblogs.
+To distinguish meaningful events from chatter/junk/spam messages, I will then apply topic modeling techniques (Latent Dirichlet Allocation) to identify topics during the time period.
 
-Top five words in each topics
+Top five words in each topics - 
 
 
 ```{r}
@@ -228,27 +200,25 @@ ap_top_terms %>%
   facet_wrap(~ topic, scales = "free") +
   scale_y_reordered()
 ```
-As shown above, the meaningful keywords can be found in each topic. From the distribution, we can see that in abnormal topic such as topic 1,5,9 and 10, the top words are dominating the topic, while in other chatter/junk/spam topics, a few normal words has relatively same high beta value.
+As shown above, the meaningful keywords can be found in each topic. From the distribution, we can see that meaningful topics such as topic 1,4,6, 9 and 10, some words with high beta value are dominating the topic, while in other chatter/junk/spam topics, a few normal words has relatively same beta value.
+
 As such, topics can be identified roughly as below.
 
 Topic 1 - police related with evacuation/hostage/standoff
 
-Topic 3 - fire at dancing dolphin
+Topic 4 - fire at dancing dolphin
 
-Topic 5- van/guy/cop related
+Topic 6- van/guy/cop related
 
 Topic 9 - pok rally
 
 Topic 10 - POK leader
 
-While other topics do not have distinguishable words, resulting the contents related to chatter/junk/spam.
-
-
-
+While other topics do not have distinguishable words, resulting the tweets contents related to chatter/junk/spam.
 
 ### __Topic Trend__
 
-By using gamma value from topic modeling results, we can then assign each document with a topic.
+By using gamma value from topic modeling results, each document can be assigned with a topic.
 
 ```{r}
 topic_gamma <- tidy(topic, matrix = "gamma")
@@ -283,9 +253,9 @@ topic_data %>% group_by(time_1min,topics_c) %>% count() %>%
   ggtitle("Topics Trend from 1700-2130")
 ```
 
-From the topic trend distribution, we can see that chatter topic 1-5 are spread all over the time period, and the number posts are small and randomly distributed. While the peaks of key major events are very obvious at certain point of time. 
+From the topic trend distribution, the chatter topic 1-5 are spread all over the time period, and the number posts are small and randomly distributed. While the peaks of key major events are very obvious at certain point of time. 
 
-In summary of topic modeling techniques and visualization, we can identify major event from junk/chatter/spam. The topic trend visualization provide information about temporal pattern of meaningful events distribution and distinguish the meaningful events during the time period.
+In summary of topic modeling techniques and visualization, major event are distinguished from junk/chatter/spam. The topic trend visualization provides information about temporal pattern of meaningful events distribution, distinguishes the meaningful events peaks and also indicates the number of people impacted during the time period, which can be applied to answer Q1 and Q2 .
 
 __Biterm Topic Modeling__
 
@@ -324,7 +294,7 @@ By applying BTM visualization, topic are clusterd in different colors as shown a
 
 ### __Tweets/Retweets and Unique Contents__
 
-Then, to derive the feature from tweets and re-tweets cotents. I calculated the unique ratio- number of unique contents divided by total tweets of a single user- and reteweet ratio - number of retweets devided by number of total tweets of a single user. These 2 indexes can help us distinguish influential users and "junk" users.
+Then, to derive the feature from tweets and re-tweets contents. I calculated the unique ratio- number of unique contents divided by total tweets of a single user- and reteweet ratio - number of retweets divided by number of total tweets of a single user. These 2 indexes can distinguish influential users and "junk" users.
 
 ```{r}
 tweet<-data %>%
@@ -384,7 +354,7 @@ ggplot(data=tweet_retweet_2,aes(x=reorder(author,tweet)))+
 
 
 
-```{r,echo=FALSE}
+```{r,echo=FALSE, include=FALSE}
 # dt<-subset(data,select=c(timestamp,author,message))
 # dt$timestamp<-str_replace_all(dt$timestamp,"2014-01-23 ","")
 # dt$message<-iconv(dt$message, 'utf-8', 'ascii', sub='')
@@ -400,9 +370,9 @@ The above chart is plotted by filtering unique_ratio less than 0.8 or retweet_ra
 
 User with number of tweets does not have any re-tweets and the unique contents of their tweets is low, such as @Clevvah4Evah, @KronosQuoth, and they are mainly posting junk/spam blogs. 
 
-For other low unique ratio , users like @grassGreeener,@cheapgoods998,@rockinHW,@junkman377,@carjunkers,@reggierockin776 posting repeated advertisement/spam/junk contents are also "junk" users.
+For other low unique ratio , users like @grassGreeener,@cheapgoods998,@rockinHW,@junkman377,@carjunkers,@reggierockin776 posting repeated advertisement/spam contents are also "junk" users.
 
-On the other hand, authors with high re-tweet frequency are @HomelandIlluminations,
+On the other hand, authors with high re-tweet frequency and high unique ratio are @HomelandIlluminations,
 @AbilaPost, @KronosStar,  @CentralBulletin , @NewsOnlineToday , and @InternationalNews, of which the post were more active and meaningful information to the public.
 
 __Network Visualization in detecting chatter/spam/junk__
@@ -426,8 +396,11 @@ RT_nodes_aggregated$id<-seq.int(nrow(RT_nodes_aggregated))
 RT_nodes_aggregated<-RT_nodes_aggregated %>% 
   rename(label=author,size=n) %>% 
   filter(label!="")
-#RT_nodes_aggregated$label<-paste(RT_nodes_aggregated$label,RT_nodes_aggregated$size)
 
+
+#RT_nodes_aggregated$label<-paste(RT_nodes_aggregated$label,RT_nodes_aggregated$size)
+RT_nodes_aggregated$size<-RT_nodes_aggregated$size+1
+RT_nodes_aggregated$size<-log2(RT_nodes_aggregated$size)*10
   
 RT_edges_aggregated_viz<-
   left_join(RT_edges_aggregated,RT_nodes_aggregated,by=c("RT_from"="label")) %>% 
@@ -456,12 +429,13 @@ RT_graph <- tbl_graph(nodes=RT_nodes_aggregated,
 ```
 
 
-This chart can be applied to answer quetions 1 and 2.
-
-From the chart, we can tell that the authors in the center like @HomelandIlluminations/@AbilaPost/@KronosStar/@CentralBulletin/@NewsOnlineToday/@InternationalNews have affected the public most directly and widely. And users like @Clevvah4Evah, @KronosQuoth have quite number of junk posting with no re-tweets, while other users with no link post mainly chatter/spam contents. 
+This chart can be applied to answer questions 1 and 2.
 
 
-To find out how many users are afftected, click the nodes and zoom in the graph, the selected node and its network  will be highlighted, which can provided the information of how many people are directly affected by the original author and the size of the dot indicates the total number of posts by users. 
+To find out how many users are affected, click the nodes and zoom in the graph, the selected node and its edges network  will be highlighted, indicating how many people are directly affected by the original author. The size of the node indicates the total number of tweet posts by users. 
+
+
+From the chart, the authors in the center like @HomelandIlluminations/@AbilaPost/@KronosStar/@CentralBulletin/@NewsOnlineToday/@InternationalNews have affected the public most directly and widely. And users like @Clevvah4Evah, @KronosQuoth have quite number of junk posting with no re-tweets, while other users with no link post are also chatter/spam contents. 
 
 
 
@@ -484,9 +458,14 @@ mean=mean(count$count_of_posts)
 
 ggplot(count,aes(x=time_1min,y=count_of_posts,fill=type))+
          geom_bar(stat="identity",position="dodge")+
-  geom_abline(h=mean, col = "black",size=5)+
+  
+ # geom_hline(yintercept = mean(count$count_of_posts),
+            # col = I('black'),
+             #size = 1)+
+  #geom_abline(h=mean, col = "black",size=5)+
   #theme(axis.text.x = element_text(angle = 90, hjust = 1))+
   ggtitle("Total Number of Posts through Period")
+  #annotate("text", x = 4, y = 25, label = "Some text")
 
 head(count[order(-count$count_of_posts),],10)
 ```
@@ -522,7 +501,8 @@ ggplot(data_rt2,aes(x=time_1min)) +
 ```
 Another way to detect the active level of microblog is to visualize the counts of re-tweet/tweet. As shown in the bar graph above, the peak trend coincides with "Total Number of Posts through the period", indicating the people were actively evolved in the events happening in Abila in particular when number of retweets was high.
 
-The goverment can monitor the ratio of retweet in community to detect abnormal trend.
+The goverment can monitor the trend of retweet in community to detect abnormal/special events.
+
 
 
 
@@ -580,6 +560,39 @@ plt
 ```
 In the re-tweet from the main media, high occurrence of fire at dolphin apartment has the most co-occurrence re-tweets, resulting highest attention and risk in the community, followed by several events involved with police such as post of pokrally/ arrive at scene. While in the edge of the visualization, the small group of public was interested in re-tweet firefighter injure at hospital/ suspect arrest, which may be important but have less attention in the community.
 
+### __User Topic Engagement__
+
+As topic modeling has preliminarily distinguished the topic of each microblog post, we can further profile users based on their contributions to the topics. 
+
+
+```{r,fig.width=8,fig.height= 18}
+data_sub<-subset(data,select = c("id","author","message","timestamp"))
+
+topic_author<-left_join(topic_data,data_sub,by=c("document"="id"))
+
+topic_author$author<-ifelse(is.na(topic_author$author),"ccdata",topic_author$author)
+
+topic_author1<-topic_author %>%filter(!topics_c %in% c("chatter1","chatter2","chatter3","chatter4","chatter5"))
+
+
+# topic_author$topics_c=ifelse(topic_author$topics_c %in% c("chatter1","chatter2","chatter3","chatter4","chatter5"),"others",topic_author$topics_c)
+
+# topic_author1<-topic_author
+
+topic_author2<-topic_author1 %>% group_by(topics_c,author) %>% summarise(topics_count=n())
+topic_author3<-topic_author %>% group_by(author) %>% summarise(total_count=n())
+
+topic_author4<-left_join(topic_author2,topic_author3,by=c("author"="author"))
+topic_author4$User_Topic_Ratio<-topic_author4$topics_count/topic_author4$total_count
+
+
+ggplot(topic_author4,aes(x=topics_c,y=author,color=topics_c,size=User_Topic_Ratio))+
+  geom_point(alpha=0.5)+
+  theme_light()+
+  ggtitle("User Engagement in Major Events")
+
+```
+From the visualization,we can evaluate the event impact for single user and their engagement ( by size of the point) of major event. 
 
 
 ## Question 3
@@ -588,7 +601,7 @@ __4.3 If you were able to send a team of first responders to any single place, w
 To send team of respondents to right location with short responding time, we can take a closely look location-tagged posts or posts contents with locations.
 
 
-### __Restrospective__
+### __Retrospective__
 
 __On retrospective approach, I will send team of first respondents to dolphin dancing apartment.__
 
@@ -713,15 +726,47 @@ __If it's real time, I will arrange the trajectory of the team according to the 
 
 In the real time events, I will monitor the tweets/retweets trend, risk level and location-stamped posts. 
 
-At 19:20:00 pm, hennyhenhendrix posted a location-stamped post -"Some moron in a black van just hit my car!" then, in 2 minutes, all call center alramed - "ALL UNITS BROADCAST-FELONY HIT & RUN-BLACK VAN/PARTIAL PLATE #L829" which brings the event to very high attention. The team should be sent to the location of 547 N. Schaber Ave as reporeted by call center. And the team should follow the trajectory of the location based by call center reporting the same contents, 
 
-Egeou Ave / Ipsilantou Ave - N. Hacia St / N. Brada St
- -N. Antoniadou St / N. Estos St,  Profitou Ilia St / Egeou Ave, and N. Limnou St / N. Achilleos St ( 7:38:22 pm)
+```{r}
+Abila_st <- st_read(dsn = "data/MC3/Geospatial", layer = "Abila")
 
- 
- At the same time, it is suggested that authority keep monitoring the location-stamped post in the community to keep tracking the black van. Users like truccotrucco and sofitees
-were key reporters located near to N. Limnou St / N. Achilleos St reporting the hostage regarding black van. The team should notice and follow their location and provide first aid accordingly.
+p = npts(Abila_st, by_feature = TRUE)
 
+Abila_st <- cbind(Abila_st, p) %>%
+  filter(p>1) 
+
+gps_sf<-st_as_sf(data_location,
+                   coords = c("longitude","latitude"),
+                  crs= 4326)
+
+gps_sf2<-subset(gps_sf,select = c(timestamp,author,message,geometry))
+
+gps_sf2<- gps_sf2 %>% filter(str_detect(gps_sf2$message,"hit a guy|there shooting|hit my car|van guy & girl"))
+
+gps_sf2<-gps_sf2%>% mutate_if(is.character, ~gsub('[^ -~]', '', .)) # remove characters non UTF-8
+
+
+tmap_mode("view") 
+
+tm_shape(Abila_st)+
+  tm_lines()+
+  tm_shape(gps_sf2)+
+  tm_dots()+
+  tm_layout(title= 'Geo-located Microblogs Demo')
+
+```
+
+
+This visualization helps to locate the users' first important post with its location. By clicking the dot on the map, the messages and timestamp can be found in detail tooltips. By creating a visual application like this, the authority can quickly find the abnormal events location, witness and events status and provide emergency assistance.
+
+
+```{r, echo=FALSE, include=FALSE}
+# data_location$timestamp<-format(data_location$timestamp, format = "%H:%M:%S")
+# 
+# DT::datatable(subset(data_location,select=c(timestamp,author,message,longitude,latitude)))
+
+# At the same time, it is suggested that authority keep monitoring the location-stamped post in the community to keep tracking the black van. Users like truccotrucco and sofitees were key reporters located near to N. Limnou St / N. Achilleos St reporting the hostage regarding black van. The team should notice and follow their location and provide first aid accordingly.
+```
 
 ```{r}
 abila<-st_read('data/MC3/Geospatial/Abila.shp',quiet=TRUE)
@@ -860,12 +905,14 @@ ggplot()+
   geom_line(data = abila4,mapping = aes(x=long,y=lat),color="red",size=1,linetype = "dashed")
 
 ```
-```{r}
-data_location$timestamp<-format(data_location$timestamp, format = "%H:%M:%S")
 
-DT::datatable(subset(data_location,select=c(timestamp,Witness,message,longitude,latitude)))
-```
-The map has highlighted the black van possible routine reported by call center and witness location-stamped tweet. The table tracks the real-time location-stamped tweet contents.
+To track the call center location, the map above has highlighted the black van possible routine reported by call center and witness location-stamped tweet. 
+
+At 19:20:00 pm, hennyhenhendrix posted a location-stamped post -"Some moron in a black van just hit my car!" then, in 2 minutes, all call center alramed - "ALL UNITS BROADCAST-FELONY HIT & RUN-BLACK VAN/PARTIAL PLATE #L829" which brings the event to very high attention. The team should be sent to the location of 547 N. Schaber Ave as reporeted by call center. And the team should follow the trajectory of the location based by call center reporting the black van related contents.
+ 
+
+
+
 
 
 

@@ -36,7 +36,7 @@ packages= c(
             'BTM','textplot','concaveman','ggwordcloud',
             'qdapDictionaries','textstem','devtools','textnets',
             'igraph', 'tidygraph', 
-             'ggraph', 'visNetwork','udpipe','grid','sp','sf','gridExtra','mapview')
+             'ggraph', 'visNetwork','udpipe','grid','sp','sf','gridExtra','mapview','tmap')
 
 for(p in packages){
   if(!require(p,character.only= T)){
@@ -60,7 +60,7 @@ __3) Data Visualization__
 
 _Basic Charts-_
 
-'tidyverse'
+'tidyverse'(ggplot)
 
 _Text-_
 
@@ -72,11 +72,12 @@ _Network-_
 
 _Map-_
 
-'sp','sf','gridExtra','mapview'
+'sp','sf','tmap','gridExtra','mapview'
 
 
 ### Import Dataset
 
+Import and append data set.
 ```{r}
 #read csv file
 data_17_1830=read_csv("data/MC3/csv-1700-1830.csv")
@@ -112,7 +113,7 @@ data$time_30min = cut(data$timestamp, breaks="30 min")
 Preprocess text data by lower case transformation, remove punctuation, numbers , stopwords and retrieve RT/ hashtags from message by using regex techniques.
 
 ```{r}
-
+data$id <- seq.int(nrow(data))
 
 
 ppl <- "@([A-Za-z]+[A-Za-z0-9_-]+)(?![A-Za-z0-9_]*\\.)"
@@ -168,7 +169,7 @@ knitr::kable(head(subset(data,select=c("message","cleaned"))), "pipe")
 ```
 
 
-Get Hashtags with function
+Get Hashtags.
 
 ```{r}
 GetHashtags <- function(tweet) {
@@ -221,27 +222,27 @@ wordcloud(words = df$word, freq = df$freq, min.freq = 5,           max.words=200
 
 #convert dataframe to corpus
 
-docs <- Corpus(VectorSource(as.character(hashtags.df$Hashtags)))
-#inspect(docs[1:2])
+hashtags.df<-na.omit(hashtags.df) 
 
-# Create a document-term-matrix
+hashtags.df$id<-seq(nrow(hashtags.df))
 
-dtm <- TermDocumentMatrix(docs) 
-matrix <- as.matrix(dtm) 
-words <- sort(rowSums(matrix),decreasing=TRUE) 
+hashtags.df$Hashtags<-str_remove(hashtags.df$Hashtags," ")
 
-# words and frequency dataframe
-df <- data.frame(word = names(words),freq=words)
 
-#word cloud
-wordcloud(words = df$word, freq = df$freq, min.freq = 5,           max.words=200, random.order=FALSE, rot.per=0.35,            colors=brewer.pal(8, "Dark2"))
+lst = strsplit(hashtags.df$Hashtags, ",")
+names(lst) = hashtags.df$id
+hashtags.df2 = melt(lst)
+
+hashtags.df2<-hashtags.df2 %>% group_by(value) %>% count() %>% ungroup()
+
+wordcloud(words = hashtags.df2$value ,freq = hashtags.df2$n, min.freq = 5,           max.words=200, random.order=FALSE, rot.per=0.35,            colors=brewer.pal(8, "Dark2"))
 
 
 #convert dataframe to corpus
 
 
 docs <- Corpus(VectorSource(as.character(data$user_mentioned)))
-inspect(docs[1:2])
+#inspect(docs[1:2])
 
 # Create a document-term-matrix
 dtm <- TermDocumentMatrix(docs) 

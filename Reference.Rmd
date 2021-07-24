@@ -24,9 +24,14 @@ This assignment is guided by [Prof. Kam Tin Seong](https://faculty.smu.edu.sg/pr
 # Reference
 
 • Junghoon Chae, Dennis Thom, Yun Jang, SungYe Kim, Thomas Ertl, David S. Ebert,
-_Public behavior response analysis in disaster events utilizing visual analytics of microblog data,Computers & Graphics_,Volume 38,2014,Pages 51-60,ISSN 0097-8493,https://doi.org/10.1016/j.cag.2013.10.008.
+Public behavior response analysis in disaster events utilizing visual analytics of microblog data, _Computers & Graphics_ ,Volume 38,2014,Pages 51-60,ISSN 0097-8493,https://doi.org/10.1016/j.cag.2013.10.008.
+
+
+• [Analyzing Information Flow within a Twitter (Ego-)Community](https://towardsdatascience.com/information-flow-within-twitter-community-def9e939bb99)
 
 • [Biterm Topic Model](https://github.com/bnosac/BTM)
+
+• [Henan Flood Wei-blog Help Information Platform](https://u9u37118bj.feishu.cn/docs/doccn3QzzbeQLPQwNSb4Hcl2X1g)
 
 • [NLP in R: Topic Modeling](https://www.kaggle.com/rtatman/nlp-in-r-topic-modelling)
 

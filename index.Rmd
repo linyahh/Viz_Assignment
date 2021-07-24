@@ -1,9 +1,12 @@
 ---
-title: "Assignment"
+title: "Real-Time, Streaming Social Media Visual Analytics"
 description: |
-  This is website is for assignment submission of ISSS608 Visual Analytics and Applications.
+  This is website is for assignment submission of Singapore Management University master program course ISSS608 Visual Analytics and Applications.
 site: distill::distill_website
 ---
+
+
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
